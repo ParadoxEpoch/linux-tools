@@ -1,0 +1,6 @@
+#!/bin/bash
+TARGET_DIR=$@
+if [ -z "$TARGET_DIR" ]; then TARGET_DIR=.; fi
+TARGET_DIR=${TARGET_DIR%/}
+shopt -s dotglob
+stat -c '%A::%a::%U:%G::%s::%n::%F' "$TARGET_DIR"/*| awk -F"::" '{sub(/.*\//, "", $5); printf "%s %d %s ", $1, $2, $3; if ($6=="directory") printf "DIR -- %s/\n", $5; else if ($6=="symbolic link") printf "LNK -- %s >>\n", $5; else printf "%dKB -- %s\n", $4/1000, $5;}'
